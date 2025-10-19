@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Learning Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .game-container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        h1 {
+            text-align: center;
+            color: #667eea;
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.1);
+            animation: bounce 2s infinite;
+        }
+        
+        h2 {
+            text-align: center;
+            font-size: 2em;
+            color: #333;
+            margin: 20px 0;
+        }
+        
+        .game-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+        
+        .game-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 40px 20px;
+            font-size: 1.8em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .game-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .game-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        .game-screen {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .game-screen.active {
+            display: block;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #ffd93d 0%, #ffb347 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 35px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Color Game Styles */
+        .color-game-area {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 25px;
+            margin-top: 20px;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .color-btn {
+            height: 150px;
+            border: 8px solid #ffffff;
+            border-radius: 25px;
+            font-size: 2em;
+            color: white;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 100%);
+            pointer-events: none;
+        }
+        
+        .color-btn:hover {
+            transform: scale(1.08) translateY(-5px);
+            border-color: #ffd93d;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        
+        .color-btn:active {
+            transform: scale(1.02);
+        }
+        
+        /* Shape Game Styles */
+        .shape-display {
+            text-align: center;
+            margin: 40px 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .shape-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .shape-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 30px;
+            font-size: 1.8em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .shape-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        }
+        
+        .shape-btn:active {
+            transform: translateY(-2px);
+        }
+        
+        /* Number Game Styles */
+        .number-display {
+            text-align: center;
+            font-size: 4em;
+            color: #667eea;
+            margin: 40px 0;
+            font-weight: bold;
+            padding: 30px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 25px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            line-height: 1.2;
+        }
+        
+        .number-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .number-btn {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 35px;
+            font-size: 2.5em;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .number-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+        }
+        
+        .number-btn:active {
+            transform: scale(1.05);
+        }
+        
+        .feedback {
+            text-align: center;
+            font-size: 2.5em;
+            margin: 25px 0;
+            min-height: 60px;
+            font-weight: bold;
+            animation: bounce 0.5s ease;
+        }
+        
+        .feedback.correct {
+            animation: bounce 0.5s ease;
+        }
+        
+        .feedback.wrong {
+            animation: shake 0.5s ease;
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 1.8em;
+            color: #667eea;
+            margin: 15px 0;
+            font-weight: bold;
+            padding: 15px;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        /* Responsive design */
+                    @media (max-width: 768px) {
+            .game-container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .game-btn {
+                font-size: 1.5em;
+                padding: 30px 15px;
+            }
+            
+            .color-options,
+            .shape-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .color-game-area {
+                padding: 20px;
+            }
+            
+            .number-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .number-display {
+                font-size: 3em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div id="menu" class="game-screen active">
+            <h1>🎮 Fun Learning Games! 🎮</h1>
+            <div class="game-menu">
+                <button class="game-btn" id="colors-start">🎨 Colors</button>
+                <button class="game-btn" id="shapes-start">⭐ Shapes</button>
+                <button class="game-btn" id="numbers-start">🔢 Numbers</button>
+            </div>
+        </div>
+        
+        <div id="color-game" class="game-screen">
+            <button class="back-btn" id="color-back">← Back to Menu</button>
+            <h1>🎨 Color Game!</h1>
+            <div class="score">⭐ Score: <span id="color-score">0</span></div>
+            <div class="feedback" id="color-feedback"></div>
+            <h2 id="color-question"></h2>
+            <div class="color-game-area">
+                <div class="color-options" id="color-options"></div>
+            </div>
+        </div>
+        
+        <div id="shape-game" class="game-screen">
+            <button class="back-btn" id="shape-back">← Back to Menu</button>
+            <h1>⭐ Shape Game!</h1>
+            <div class="score">⭐ Score: <span id="shape-score">0</span></div>
+            <div class="feedback" id="shape-feedback"></div>
+            <div class="shape-display" id="shape-display"></div>
+            <h2>What shape is this?</h2>
+            <div class="shape-options" id="shape-options"></div>
+        </div>
+        
+        <div id="number-game" class="game-screen">
+            <button class="back-btn" id="number-back">← Back to Menu</button>
+            <h1>🔢 Counting Game!</h1>
+            <div class="score">⭐ Score: <span id="number-score">0</span></div>
+            <div class="feedback" id="number-feedback"></div>
+            <h2>Count the stars!</h2>
+            <div id="number-display"></div>
+            <div class="number-options" id="number-options"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Game state
+        const gameState = {
+            colors: { score: 0, current: null },
+            shapes: { score: 0, current: null },
+            numbers: { score: 0, current: null }
+        };
+        
+        // Game data
+        const colors = [
+            { name: 'Red', value: '#e74c3c' },
+            { name: 'Blue', value: '#3498db' },
+            { name: 'Green', value: '#2ecc71' },
+            { name: 'Yellow', value: '#f1c40f' },
+            { name: 'Purple', value: '#9b59b6' },
+            { name: 'Orange', value: '#e67e22' }
+        ];
+        
+        const shapes = [
+            { name: 'Circle', svg: '<svg width="180" height="180"><circle cx="90" cy="90" r="70" fill="#ff6b6b"/></svg>' },
+            { name: 'Square', svg: '<svg width="180" height="180"><rect x="30" y="30" width="120" height="120" fill="#4ecdc4"/></svg>' },
+            { name: 'Triangle', svg: '<svg width="180" height="180"><polygon points="90,30 30,150 150,150" fill="#9b59b6"/></svg>' },
+            { name: 'Star', svg: '<svg width="180" height="180"><polygon points="90,20 110,75 170,75 120,115 140,170 90,130 40,170 60,115 10,75 70,75" fill="#a8e6cf"/></svg>' }
+        ];
+        
+        // Navigation functions
+        function showScreen(screenId) {
+            document.querySelectorAll('.game-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+        
+        function backToMenu() {
+            showScreen('menu');
+        }
+        
+        // Color game
+        function setupColorGame() {
+            const target = colors[Math.floor(Math.random() * colors.length)];
+            gameState.colors.current = target;
+            
+            document.getElementById('color-question').textContent = `Find the ${target.name} color!`;
+            document.getElementById('color-feedback').textContent = '';
+            document.getElementById('color-feedback').className = 'feedback';
+            
+            const options = [target];
+            while (options.length < 4) {
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                if (!options.includes(color)) options.push(color);
+            }
+            options.sort(() => Math.random() - 0.5);
+            
+            const container = document.getElementById('color-options');
+            container.innerHTML = '';
+            options.forEach(color => {
+                const btn = document.createElement('button');
+                btn.className = 'color-btn';
+                btn.style.background = color.value;
+                btn.textContent = color.name;
+                btn.addEventListener('click', () => checkColorAnswer(color));
+                container.appendChild(btn);
+            });
+        }
+        
+        function checkColorAnswer(selected) {
+            const feedback = document.getElementById('color-feedback');
+            if (selected.name === gameState.colors.current.name) {
+                feedback.textContent = '🎉 Awesome!';
+                feedback.style.color = '#2ecc71';
+                feedback.className = 'feedback correct';
+                gameState.colors.score++;
+                document.getElementById('color-score').textContent = gameState.colors.score;
+                setTimeout(setupColorGame, 1800);
+            } else {
+                feedback.textContent = 'Try again! 💪';
+                feedback.style.color = '#e74c3c';
+                feedback.className = 'feedback wrong';
+                setTimeout(() => {
+                    feedback.textContent = '';
+                }, 1200);
+            }
+        }
+        
+        // Shape game
+        function setupShapeGame() {
+            const target = shapes[Math.floor(Math.random() * shapes.length)];
+            gameState.shapes.current = target;
+            
+            document.getElementById('shape-display').innerHTML = target.svg;
+            document.getElementById('shape-feedback').textContent = '';
+            document.getElementById('shape-feedback').className = 'feedback';
+            
+            const container = document.getElementById('shape-options');
+            container.innerHTML = '';
+            shapes.forEach(shape => {
+                const btn = document.createElement('button');
+                btn.className = 'shape-btn';
+                btn.textContent = shape.name;
+                btn.addEventListener('click', () => checkShapeAnswer(shape));
+                container.appendChild(btn);
+            });
+        }
+        
+        function checkShapeAnswer(selected) {
+            const feedback = document.getElementById('shape-feedback');
+            if (selected.name === gameState.shapes.current.name) {
+                feedback.textContent = '⭐ Perfect!';
+                feedback.style.color = '#2ecc71';
+                feedback.className = 'feedback correct';
+                gameState.shapes.score++;
+                document.getElementById('shape-score').textContent = gameState.shapes.score;
+                setTimeout(setupShapeGame, 1800);
+            } else {
+                feedback.textContent = 'Try again! 💪';
+                feedback.style.color = '#e74c3c';
+                feedback.className = 'feedback wrong';
+                setTimeout(() => {
+                    feedback.textContent = '';
+                }, 1200);
+            }
+        }
+        
+        // Number game
+        function setupNumberGame() {
+            const target = Math.floor(Math.random() * 10) + 1;
+            gameState.numbers.current = target;
+            
+            const display = document.getElementById('number-display');
+            display.innerHTML = '<div class="number-display">' + '⭐'.repeat(target) + '</div>';
+            document.getElementById('number-feedback').textContent = '';
+            document.getElementById('number-feedback').className = 'feedback';
+            
+            const options = [target];
+            while (options.length < 6) {
+                const num = Math.floor(Math.random() * 10) + 1;
+                if (!options.includes(num)) options.push(num);
+            }
+            options.sort(() => Math.random() - 0.5);
+            
+            const container = document.getElementById('number-options');
+            container.innerHTML = '';
+            options.forEach(num => {
+                const btn = document.createElement('button');
+                btn.className = 'number-btn';
+                btn.textContent = num;
+                btn.addEventListener('click', () => checkNumberAnswer(num));
+                container.appendChild(btn);
+            });
+        }
+        
+        function checkNumberAnswer(selected) {
+            const feedback = document.getElementById('number-feedback');
+            if (selected === gameState.numbers.current) {
+                feedback.textContent = '🌟 Great job!';
+                feedback.style.color = '#2ecc71';
+                feedback.className = 'feedback correct';
+                gameState.numbers.score++;
+                document.getElementById('number-score').textContent = gameState.numbers.score;
+                setTimeout(setupNumberGame, 1800);
+            } else {
+                feedback.textContent = 'Try again! 💪';
+                feedback.style.color = '#e74c3c';
+                feedback.className = 'feedback wrong';
+                setTimeout(() => {
+                    feedback.textContent = '';
+                }, 1200);
+            }
+        }
+        
+        // Initialize event listeners when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menu buttons
+            document.getElementById('colors-start').addEventListener('click', function() {
+                showScreen('color-game');
+                setupColorGame();
+            });
+            
+            document.getElementById('shapes-start').addEventListener('click', function() {
+                showScreen('shape-game');
+                setupShapeGame();
+            });
+            
+            document.getElementById('numbers-start').addEventListener('click', function() {
+                showScreen('number-game');
+                setupNumberGame();
+            });
+            
+            // Back buttons
+            document.getElementById('color-back').addEventListener('click', backToMenu);
+            document.getElementById('shape-back').addEventListener('click', backToMenu);
+            document.getElementById('number-back').addEventListener('click', backToMenu);
+        });
+    </script>
+</body>
+</html>
